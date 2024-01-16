@@ -6,6 +6,7 @@
 import type { worker } from '../../fillers/monaco-editor-core';
 import * as cssService from 'vscode-css-languageservice';
 import { Options } from './monaco.contribution';
+import { replaceMarkersWithVariables, replaceVariablesWithMarkers } from '../../common/utils';
 
 export class CSSWorker {
 	// --- model sync -----------------------
@@ -211,18 +212,26 @@ export class CSSWorker {
 		}
 		const settings = { ...this._languageSettings.format, ...options };
 		const textEdits = this._languageService.format(document, range! /* TODO */, settings);
-		return Promise.resolve(textEdits);
+		const updatedEdits = textEdits.map((edit) => {
+			return {
+				...edit,
+				newText: replaceMarkersWithVariables(edit.newText)
+			};
+		});
+		return Promise.resolve(updatedEdits);
 	}
+
+	private _convertToValidCSS(modelValue: string) {
+		let result = replaceVariablesWithMarkers(modelValue);
+		return result;
+	}
+
 	private _getTextDocument(uri: string): cssService.TextDocument | null {
 		const models = this._ctx.getMirrorModels();
 		for (const model of models) {
 			if (model.uri.toString() === uri) {
-				return cssService.TextDocument.create(
-					uri,
-					this._languageId,
-					model.version,
-					model.getValue()
-				);
+				const cssString = this._convertToValidCSS(model.getValue());
+				return cssService.TextDocument.create(uri, this._languageId, model.version, cssString);
 			}
 		}
 		return null;

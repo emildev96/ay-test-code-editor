@@ -13,7 +13,8 @@ export const conf: languages.LanguageConfiguration = {
 	},
 
 	brackets: [
-		['{', '}'],
+		// Disable brackets as it has higher priority to custom variable e.g. {{ Some Variable }} and affects brackets colors
+		// ['{', '}'],
 		['[', ']'],
 		['(', ')']
 	],
@@ -48,7 +49,7 @@ export const language = <languages.IMonarchLanguage>{
 
 	ws: '[ \t\n\r\f]*', // whitespaces (referenced in several rules)
 	identifier:
-		'-?-?([a-zA-Z]|(\\\\(([0-9a-fA-F]{1,6}\\s?)|[^[0-9a-fA-F])))([\\w\\-]|(\\\\(([0-9a-fA-F]{1,6}\\s?)|[^[0-9a-fA-F])))*',
+		'-?-?([a-zA-Z]|(\\\\(([0-9a-fA-F]{1,6}\\s?)|[^[0-9a-fA-F])))([\\w\\-]|(\\\\(([0-9a-fA-F]{1,6}\\s?)|[^[0-9a-fA-F])))*|(\\{\\{\\s(([_a-zA-Z0-9][_a-zA-Z0-9 ]*[_a-zA-Z0-9])|[_a-zA-Z0-9])\\s\\}\\})',
 
 	brackets: [
 		{ open: '{', close: '}', token: 'delimiter.bracket' },

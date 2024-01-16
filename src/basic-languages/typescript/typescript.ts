@@ -15,7 +15,7 @@ export const conf: languages.LanguageConfiguration = {
 	},
 
 	brackets: [
-		['{', '}'],
+		// ['{', '}'],
 		['[', ']'],
 		['(', ')']
 	],
@@ -222,7 +222,11 @@ export const language = {
 
 	// The main tokenizer for our languages
 	tokenizer: {
-		root: [[/[{}]/, 'delimiter.bracket'], { include: 'common' }],
+		root: [
+			[/\{\{\s(([_a-zA-Z0-9][_a-zA-Z0-9 ]*[_a-zA-Z0-9])|[_a-zA-Z0-9])\s\}\}/, 'keyword'],
+			[/[{}]/, 'delimiter.bracket'],
+			{ include: 'common' }
+		],
 
 		common: [
 			// identifiers and keywords
